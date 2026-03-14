@@ -16,7 +16,7 @@ public class Account {
 
     @Column(name = "account_number", unique = true)
     @NotNull(message = "Account number is required")
-    private Integer accountNumber;
+    private Long accountNumber;
 
     @Column(name = "name")
     @NotBlank(message = "Name is required")
@@ -30,7 +30,7 @@ public class Account {
 
     @Column(name = "email", unique = true)
     @NotBlank(message = "Email is required")
-    @Email(message = "Email is not in formate. e.g. john@doe.com")
+    @Email(message = "Invalid email formate. e.g. john@doe.com")
     @Size(max = 100)
     private String email;
 

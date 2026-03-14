@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 public class AccountResponseDto {
-
-    private Integer accountNumber;
+    private Long accountNumber;
     private String name;
     private Double balance;
     private String email;
+    private String phone;
 }

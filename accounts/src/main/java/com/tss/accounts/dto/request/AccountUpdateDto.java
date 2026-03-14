@@ -1,4 +1,4 @@
-package com.tss.accounts.dto.response;
+package com.tss.accounts.dto.request;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

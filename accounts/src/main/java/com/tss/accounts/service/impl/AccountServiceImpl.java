@@ -1,20 +1,20 @@
 package com.tss.accounts.service.impl;
 
+import com.tss.accounts.dto.request.AccountRequestDto;
+import com.tss.accounts.dto.request.AccountUpdateDto;
 import com.tss.accounts.dto.response.AccountPageDto;
 import com.tss.accounts.dto.response.AccountResponseDto;
-import com.tss.accounts.dto.response.AccountUpdateDto;
 import com.tss.accounts.entity.Account;
 import com.tss.accounts.mapper.AccountMapper;
 import com.tss.accounts.repository.AccountRepository;
 import com.tss.accounts.service.AccountService;
+import com.tss.accounts.utils.AccountNumberGenerator;
 import jakarta.persistence.NoResultException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -54,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponseDto getAccountByAccountNumber(Integer accountNumber) {
+    public AccountResponseDto getAccountByAccountNumber(Long accountNumber) {
 
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new NoResultException(
@@ -64,8 +64,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponseDto createAccount(Account account) {
+    public AccountResponseDto createAccount(AccountRequestDto accountRequestDto) {
          try {
+                Account account = accountMapper.toEntity(accountRequestDto);
+                account.setAccountNumber(AccountNumberGenerator.generate());
                 Account createdAccount = accountRepository.save(account);
                 return accountMapper.toDto(createdAccount);
          } catch (Exception e) {
@@ -74,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccountByAccountNumber(Integer accountNumber) {
+    public void deleteAccountByAccountNumber(Long accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new NoResultException(
                         "Account number " + accountNumber + " does not exist"
@@ -86,22 +88,24 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    public AccountResponseDto updateAccountByAccountNumber(Integer accountNumber, AccountUpdateDto dto) {
+    @Override
+    public AccountResponseDto updateAccountByAccountNumber(Long accountNumber, AccountUpdateDto dto) {
 
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new NoResultException("Account number " + accountNumber + " does not exist"));
 
         try {
-            if (dto.getEmail() != null) {
+            if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
                 account.setEmail(dto.getEmail());
+                System.out.println(account.getEmail());
             }
-
-            if (dto.getPhone() != null) {
+            if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
                 account.setPhone(dto.getPhone());
+                System.out.println(account.getPhone());
             }
 
             Account updatedAccount = accountRepository.save(account);
-
+            System.out.println(updatedAccount);
             return accountMapper.toDto(updatedAccount);
         } catch (Exception e) {
             throw new RuntimeException("Account update failed: " +  e.getMessage());
