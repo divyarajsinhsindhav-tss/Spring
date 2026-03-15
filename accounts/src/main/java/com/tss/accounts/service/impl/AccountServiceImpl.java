@@ -2,6 +2,7 @@ package com.tss.accounts.service.impl;
 
 import com.tss.accounts.dto.request.AccountRequestDto;
 import com.tss.accounts.dto.request.AccountUpdateDto;
+import com.tss.accounts.dto.request.TransactionRequestDto;
 import com.tss.accounts.dto.response.AccountPageDto;
 import com.tss.accounts.dto.response.AccountResponseDto;
 import com.tss.accounts.entity.Account;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -97,18 +99,51 @@ public class AccountServiceImpl implements AccountService {
         try {
             if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
                 account.setEmail(dto.getEmail());
-                System.out.println(account.getEmail());
             }
             if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
                 account.setPhone(dto.getPhone());
-                System.out.println(account.getPhone());
             }
 
             Account updatedAccount = accountRepository.save(account);
-            System.out.println(updatedAccount);
             return accountMapper.toDto(updatedAccount);
         } catch (Exception e) {
             throw new RuntimeException("Account update failed: " +  e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public AccountResponseDto debit(TransactionRequestDto transactionRequestDto) {
+        Account account = accountRepository.findByAccountNumber(transactionRequestDto.getAccountNumber())
+                .orElseThrow(() -> new NoResultException("Account number " + transactionRequestDto.getAccountNumber() + " does not exist"));
+
+        try {
+            if (transactionRequestDto.getAmount() <= 0) {
+                throw new IllegalArgumentException("Invalid amount");
+            }
+            if (account.getBalance() < transactionRequestDto.getAmount()) {
+                throw new RuntimeException("Insufficient balance");
+            }
+            account.setBalance(account.getBalance() - transactionRequestDto.getAmount());
+            return accountMapper.toDto(accountRepository.save(account));
+        }  catch (Exception e) {
+            throw new RuntimeException("Account debit failed: " +  e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public AccountResponseDto credit(TransactionRequestDto transactionRequestDto) {
+        Account account = accountRepository.findByAccountNumber(transactionRequestDto.getAccountNumber())
+                .orElseThrow(() -> new NoResultException("Account number " + transactionRequestDto.getAccountNumber() + " does not exist"));
+        try {
+            if (transactionRequestDto.getAmount() <= 0 ) {
+                throw new IllegalArgumentException("Invalid amount");
+            }
+            account.setBalance(account.getBalance() + transactionRequestDto.getAmount());
+            return accountMapper.toDto(accountRepository.save(account));
+        }   catch (Exception e) {
+            throw new RuntimeException("Account credit failed: " +  e.getMessage());
         }
     }
 

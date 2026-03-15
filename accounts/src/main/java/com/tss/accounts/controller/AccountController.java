@@ -2,6 +2,7 @@ package com.tss.accounts.controller;
 
 import com.tss.accounts.dto.request.AccountRequestDto;
 import com.tss.accounts.dto.request.AccountUpdateDto;
+import com.tss.accounts.dto.request.TransactionRequestDto;
 import com.tss.accounts.dto.response.AccountPageDto;
 import com.tss.accounts.dto.response.AccountResponseDto;
 import com.tss.accounts.service.AccountService;
@@ -65,6 +66,26 @@ public class AccountController {
             AccountResponseDto accountResponseDto = accountService.updateAccountByAccountNumber(accountNumber, accountUpdateDto);
             return ResponseEntity.status(HttpStatus.OK).body(accountResponseDto);
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/credit")
+    public ResponseEntity<?> credit(@RequestBody TransactionRequestDto transactionRequestDto) {
+        try {
+            AccountResponseDto accountResponseDto = accountService.credit(transactionRequestDto);
+            return ResponseEntity.status(HttpStatus.OK).body(accountResponseDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/debit")
+    public ResponseEntity<?> debit(@RequestBody TransactionRequestDto transactionRequestDto) {
+        try {
+            AccountResponseDto accountResponseDto = accountService.debit(transactionRequestDto);
+            return ResponseEntity.status(HttpStatus.OK).body(accountResponseDto);
+        }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

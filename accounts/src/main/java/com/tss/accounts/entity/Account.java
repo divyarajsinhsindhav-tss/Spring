@@ -2,6 +2,7 @@ package com.tss.accounts.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
@@ -26,7 +27,8 @@ public class Account {
 
     @Column(name = "balance")
     @DecimalMin(value = "0.0", message = "Balance cannot be negative")
-    private Double balance;
+
+    private Double balance = 0.0;
 
     @Column(name = "email", unique = true)
     @NotBlank(message = "Email is required")

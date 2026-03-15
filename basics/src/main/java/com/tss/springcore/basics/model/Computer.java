@@ -15,6 +15,22 @@ public class Computer {
         this.hardDisk = hardDisk;
     }
 
+    public String getComputerName() {
+        return computerName;
+    }
+
+    public void setComputerName(String computerName) {
+        this.computerName = computerName;
+    }
+
+    public Harddisk getHardDisk() {
+        return hardDisk;
+    }
+
+    public void setHardDisk(Harddisk hardDisk) {
+        this.hardDisk = hardDisk;
+    }
+
     @Override
     public String toString() {
         return "Computer{" +

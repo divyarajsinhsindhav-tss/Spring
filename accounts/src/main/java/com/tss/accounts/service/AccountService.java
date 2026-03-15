@@ -2,6 +2,7 @@ package com.tss.accounts.service;
 
 import com.tss.accounts.dto.request.AccountRequestDto;
 import com.tss.accounts.dto.request.AccountUpdateDto;
+import com.tss.accounts.dto.request.TransactionRequestDto;
 import com.tss.accounts.dto.response.AccountPageDto;
 import com.tss.accounts.dto.response.AccountResponseDto;
 
@@ -16,4 +17,8 @@ public interface AccountService {
     void deleteAccountByAccountNumber(Long accountNumber);
 
     AccountResponseDto updateAccountByAccountNumber(Long accountNumber, AccountUpdateDto dto);
+
+    AccountResponseDto debit(TransactionRequestDto transactionRequestDto);
+
+    AccountResponseDto credit(TransactionRequestDto transactionRequestDto);
 }

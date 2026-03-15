@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/app")
 public class ComputerController {
 
-    private ComputerService computerService;
+    private final ComputerService computerService;
 
     public ComputerController(ComputerService computerService) {
         this.computerService = computerService;
@@ -21,7 +21,6 @@ public class ComputerController {
 
     @GetMapping("/computers")
     public Computer getComputer() {
-        System.out.println(new Computer(new Harddisk()));
-        return new Computer(new Harddisk());
+        return computerService.getComputer();
     }
 }
