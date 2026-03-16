@@ -4,7 +4,9 @@ import com.tss.databaseconnection.dto.request.StudentRequestDto;
 import com.tss.databaseconnection.dto.response.StudentPageDto;
 import com.tss.databaseconnection.dto.response.StudentResponseDto;
 import com.tss.databaseconnection.service.StudentService;
-import org.springframework.data.domain.Page;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
@@ -42,16 +45,23 @@ public class StudentController {
     // Create new student
     @PostMapping("/")
     public ResponseEntity<StudentResponseDto> createStudent(
-            @RequestBody StudentRequestDto studentRequestDto) {
+            @Valid @RequestBody StudentRequestDto studentRequestDto) {
 
-        return ResponseEntity.ok(studentService.addStudent(studentRequestDto));
+        logger.info("Received request to create student with firstName={}",
+                studentRequestDto.getFirstName());
+
+        StudentResponseDto response = studentService.addStudent(studentRequestDto);
+
+        logger.info("Student created successfully with id={}", response.getId());
+
+        return ResponseEntity.ok(response);
     }
 
     // Update student
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudent(
             @PathVariable int id,
-            @RequestBody StudentRequestDto studentRequestDto) {
+            @Valid @RequestBody StudentRequestDto studentRequestDto) {
 
         return ResponseEntity.ok(studentService.updateStudent(id, studentRequestDto));
     }

@@ -4,21 +4,25 @@ import com.tss.databaseconnection.dto.request.StudentRequestDto;
 import com.tss.databaseconnection.dto.response.StudentPageDto;
 import com.tss.databaseconnection.dto.response.StudentResponseDto;
 import com.tss.databaseconnection.entity.Student;
+import com.tss.databaseconnection.exception.ApplicationException;
 import com.tss.databaseconnection.mapper.StudentMapper;
 import com.tss.databaseconnection.repository.StudentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
+@Slf4j
 public class StudentServiceImpl implements StudentService {
 
     private StudentRepository studentRepository;
     private StudentMapper studentMapper;
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
 
     public StudentServiceImpl(StudentRepository studentRepository,  StudentMapper studentMapper) {
         this.studentRepository = studentRepository;
@@ -52,9 +56,27 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentResponseDto addStudent(StudentRequestDto student) {
-        Student newStudent = studentMapper.toEntity(student);
-        studentRepository.save(newStudent);
-        return studentMapper.toDto(newStudent);
+
+        logger.info("Adding new student to database. firstName={}, age={}",
+                student.getFirstName(), student.getAge());
+
+        try {
+
+            Student newStudent = studentMapper.toEntity(student);
+
+            studentRepository.save(newStudent);
+
+            logger.info("Student successfully saved with id={}", newStudent.getStudentId());
+
+            return studentMapper.toDto(newStudent);
+
+        } catch (Exception e) {
+
+            logger.error("Error occurred while saving student with firstName={}",
+                    student.getFirstName(), e);
+
+            throw e;
+        }
     }
 
     @Override

@@ -1,0 +1,7 @@
+2026-03-16T15:26:10.446+05:30  WARN 4420 --- [databaseconnection] [http-nio-8080-exec-8] c.t.d.exception.GlobalExceptionHandler   : 404 Error - Resource not found for path=/studen/
+2026-03-16T15:26:10.459+05:30  WARN 4420 --- [databaseconnection] [http-nio-8080-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource studen for request '/studen/'.]
+2026-03-16T15:26:42.047+05:30  INFO 4420 --- [databaseconnection] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-16T15:26:42.197+05:30  INFO 4420 --- [databaseconnection] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-03-16T15:26:42.206+05:30  INFO 4420 --- [databaseconnection] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-16T15:26:42.213+05:30  INFO 4420 --- [databaseconnection] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-03-16T15:26:42.218+05:30  INFO 4420 --- [databaseconnection] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

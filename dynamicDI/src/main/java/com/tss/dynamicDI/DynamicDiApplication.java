@@ -1,13 +1,13 @@
-package com.tss.databaseconnection;
+package com.tss.dynamicDI;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DatabaseconnectionApplication {
+public class  DynamicDiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DatabaseconnectionApplication.class, args);
+		SpringApplication.run(DynamicDiApplication.class, args);
 	}
 
 }
