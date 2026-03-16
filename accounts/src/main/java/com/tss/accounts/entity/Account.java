@@ -27,7 +27,6 @@ public class Account {
 
     @Column(name = "balance")
     @DecimalMin(value = "0.0", message = "Balance cannot be negative")
-
     private Double balance = 0.0;
 
     @Column(name = "email", unique = true)
