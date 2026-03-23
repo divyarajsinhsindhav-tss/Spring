@@ -2,6 +2,7 @@ package com.tss.advancemapping.service;
 
 import com.tss.advancemapping.dto.request.InstructorRequestDto;
 import com.tss.advancemapping.dto.response.InstructorResponseDto;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 

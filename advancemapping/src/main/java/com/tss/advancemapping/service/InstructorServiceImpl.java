@@ -2,11 +2,15 @@ package com.tss.advancemapping.service;
 
 import com.tss.advancemapping.dto.request.InstructorRequestDto;
 import com.tss.advancemapping.dto.response.InstructorResponseDto;
+import com.tss.advancemapping.entity.Course;
 import com.tss.advancemapping.entity.Instructor;
 import com.tss.advancemapping.exception.ApplicationException;
+import com.tss.advancemapping.exception.BusinessRuleException;
 import com.tss.advancemapping.exception.ResourceNotFoundException;
 import com.tss.advancemapping.mapper.InstructorMapper;
+import com.tss.advancemapping.repository.CourseRepository;
 import com.tss.advancemapping.repository.InstructorRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -75,5 +79,4 @@ public class InstructorServiceImpl implements InstructorService {
             throw new ApplicationException("Something went wrong while updating instructor",  "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
         }
     }
-
 }

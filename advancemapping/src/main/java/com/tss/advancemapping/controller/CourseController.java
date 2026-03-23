@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/studentapp/")
+@RequestMapping("/studentapp/courses")
 public class CourseController {
 
     private CourseService courseService;
@@ -20,17 +20,17 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("courses/")
+    @GetMapping("/")
     public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
         return ResponseEntity.ok().body(courseService.getAllCourse());
     }
 
-    @GetMapping("courses/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CourseResponseDto> getCourse(@PathVariable Integer id) {
         return ResponseEntity.ok().body(courseService.getCourseById(id));
     }
 
-    @PostMapping("courses/")
+    @PostMapping("/create")
     public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto courseRequestDto) {
         return ResponseEntity.ok().body(courseService.createCourse(courseRequestDto));
     }
@@ -38,5 +38,10 @@ public class CourseController {
     @PutMapping("courses/")
     public ResponseEntity<CourseResponseDto> updateCourse(@RequestBody Integer id, CourseRequestDto courseRequestDto) {
         return ResponseEntity.ok().body(courseService.updateCourse(id, courseRequestDto));
+    }
+
+    @PutMapping("/{courseId}/instructor/{instructorId}/assign")
+    public ResponseEntity<CourseResponseDto> assignCourse(@PathVariable Integer instructorId, @PathVariable Integer courseId) {
+        return ResponseEntity.ok().body(courseService.assignInstructorToCourse(instructorId, courseId));
     }
 }

@@ -26,7 +26,7 @@ public class Instructor {
     @NotBlank(message = "Qualification can't be blank")
     private String qualification;
 
-    @OneToMany(cascade = {
+    @OneToMany(mappedBy = "instructor", cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,

@@ -9,6 +9,7 @@ import com.tss.advancemapping.exception.ResourceNotFoundException;
 import com.tss.advancemapping.mapper.CourseMapper;
 import com.tss.advancemapping.repository.CourseRepository;
 import com.tss.advancemapping.repository.InstructorRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -78,21 +79,40 @@ public class CourseServiceImpl implements CourseService {
                 course.setDuration(courseRequestDto.getDuration());
             }
 
-            if (courseRequestDto.getInstructorId() != null) {
-                Instructor instructor = instructorRepository
-                        .findById(courseRequestDto.getInstructorId())
-                        .orElseThrow(() -> new ResourceNotFoundException(
-                                "Instructor", courseRequestDto.getInstructorId()));
-
-                course.setInstructor(instructor);
-            }
-
-            Course updatedCourse = courseRepository.save(course);
-            return courseMapper.toDto(updatedCourse);
+            Course updated = courseRepository.save(course);
+            return courseMapper.toDto(updated);
         } catch (ApplicationException e) {
             throw new ApplicationException("Something went wrong while updating course", "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
         }
     }
 
+    @Transactional
+    @Override
+    public CourseResponseDto assignInstructorToCourse(Integer courseId, Integer instructorId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course", courseId));
+
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Instructor", instructorId));
+
+        boolean checkedCourse = instructor.getCourses()
+                .contains(course);
+
+        if(checkedCourse) {
+            return courseMapper.toDto(course);
+        }
+
+        Instructor oldInstructor = course.getInstructor();
+
+        if(oldInstructor != null) {
+            oldInstructor.getCourses().remove(course);
+        }
+        course.setInstructor(instructor);
+        instructor.getCourses().add(course);
+
+        Course updated = courseRepository.save(course);
+
+        return courseMapper.toDto(updated);
+    }
 
 }
