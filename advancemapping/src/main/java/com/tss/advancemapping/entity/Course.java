@@ -4,6 +4,8 @@ package com.tss.advancemapping.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Table(name = "courses")
 @Data
@@ -31,4 +33,7 @@ public class Course {
     })
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
+
+    @ManyToMany(mappedBy = "courses")
+    private List<Student> student;
 }

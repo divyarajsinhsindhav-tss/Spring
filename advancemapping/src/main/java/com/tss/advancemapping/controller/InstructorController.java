@@ -48,4 +48,9 @@ public class InstructorController {
         return ResponseEntity.ok().body(courseService.assignInstructorToCourse(instructorId, courseId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<InstructorResponseDto>> searchInstructors(@RequestParam String searchString) {
+        return ResponseEntity.ok().body(instructorService.searchInstructor(searchString));
+    }
+
 }

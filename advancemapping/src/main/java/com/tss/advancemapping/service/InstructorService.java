@@ -14,4 +14,6 @@ public interface InstructorService {
     InstructorResponseDto getInstructorById(Integer id);
 
     InstructorResponseDto updateInstructor(Integer id, InstructorRequestDto instructorRequestDto);
+
+    List<InstructorResponseDto> searchInstructor(String searchString);
 }

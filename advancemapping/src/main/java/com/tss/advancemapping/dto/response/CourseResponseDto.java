@@ -16,4 +16,6 @@ public class CourseResponseDto {
     private Long instructorId;
     private String instructorName;
 
+
+
 }

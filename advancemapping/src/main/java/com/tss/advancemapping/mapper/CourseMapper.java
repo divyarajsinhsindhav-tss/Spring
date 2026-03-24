@@ -12,6 +12,6 @@ public interface CourseMapper {
     Course toEntity(CourseRequestDto courseRequestDto);
 
     @Mapping(source = "instructor.name", target = "instructorName")
-    @Mapping(source = "instructor.id", target = "instructorId")
+    @Mapping(source = "instructor.instructor_id", target = "instructorId")
     CourseResponseDto toDto(Course course);
 }

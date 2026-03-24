@@ -2,29 +2,38 @@ package com.tss.advancemapping.service;
 
 import com.tss.advancemapping.dto.request.CourseRequestDto;
 import com.tss.advancemapping.dto.response.CourseResponseDto;
+import com.tss.advancemapping.dto.response.StudentResponseDto;
 import com.tss.advancemapping.entity.Course;
 import com.tss.advancemapping.entity.Instructor;
+import com.tss.advancemapping.entity.Student;
 import com.tss.advancemapping.exception.ApplicationException;
 import com.tss.advancemapping.exception.ResourceNotFoundException;
 import com.tss.advancemapping.mapper.CourseMapper;
+import com.tss.advancemapping.mapper.StudentMapper;
 import com.tss.advancemapping.repository.CourseRepository;
 import com.tss.advancemapping.repository.InstructorRepository;
-import jakarta.transaction.Transactional;
+import com.tss.advancemapping.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class CourseServiceImpl implements CourseService {
 
     private CourseRepository courseRepository;
     private InstructorRepository instructorRepository;
     private CourseMapper courseMapper;
+    private StudentRepository studentRepository;
+    private StudentMapper studentMapper;
 
-    public CourseServiceImpl(CourseRepository courseRepository, CourseMapper courseMapper, InstructorRepository instructorRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, CourseMapper courseMapper, InstructorRepository instructorRepository, StudentRepository studentRepository, StudentMapper studentMapper) {
         this.courseRepository = courseRepository;
         this.instructorRepository = instructorRepository;
         this.courseMapper = courseMapper;
+        this.studentRepository = studentRepository;
+        this.studentMapper = studentMapper;
     }
 
     @Override
@@ -86,7 +95,6 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    @Transactional
     @Override
     public CourseResponseDto assignInstructorToCourse(Integer courseId, Integer instructorId) {
         Course course = courseRepository.findById(courseId)
@@ -114,5 +122,66 @@ public class CourseServiceImpl implements CourseService {
 
         return courseMapper.toDto(updated);
     }
+
+    @Override
+    public Integer countOfCourse(Integer instructorId) {
+        try {
+            Integer countOfCourse = courseRepository.countOfCourses(instructorId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Instructor", instructorId));
+
+            return countOfCourse;
+        } catch (Exception e) {
+            throw new ApplicationException("Something went wrong while fetching count of courses", "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
+        }
+    }
+
+    @Override
+    public CourseResponseDto assignCourseToStudent(Integer courseId, Integer studentId) {
+        try {
+            Student student = studentRepository.findById(studentId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Student", studentId));
+            Course course = courseRepository.findById(courseId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Course", courseId));
+
+            boolean checkedStudent = student.getCourses()
+                    .contains(course);
+
+            if(checkedStudent) {
+                return courseMapper.toDto(course);
+            }
+
+            course.getStudent().add(student);
+            student.getCourses().add(course);
+
+            Course updated = courseRepository.save(course);
+            return courseMapper.toDto(updated);
+
+        } catch (Exception e) {
+            throw new ApplicationException("Something went wrong while assigning course to student", "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
+        }
+    }
+
+    @Override
+    public List<StudentResponseDto> getStudents(Integer courseId) {
+        try {
+            if (!courseRepository.existsById(courseId)) {
+                throw new ResourceNotFoundException("Course", courseId);
+            }
+
+            List<Student> students = courseRepository.getStudentsByCourseId(courseId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Student", courseId));
+
+            List<StudentResponseDto> response = students.stream()
+                    .map(studentMapper::toDto)
+                    .toList();
+
+            return response;
+
+        } catch (Exception e) {
+            throw new ApplicationException("Something went wrong while getting students",  "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
+        }
+    }
+
+
 
 }

@@ -3,6 +3,7 @@ package com.tss.advancemapping.controller;
 
 import com.tss.advancemapping.dto.request.CourseRequestDto;
 import com.tss.advancemapping.dto.response.CourseResponseDto;
+import com.tss.advancemapping.dto.response.StudentResponseDto;
 import com.tss.advancemapping.entity.Course;
 import com.tss.advancemapping.service.CourseService;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +44,15 @@ public class CourseController {
     @PutMapping("/{courseId}/instructor/{instructorId}/assign")
     public ResponseEntity<CourseResponseDto> assignCourse(@PathVariable Integer instructorId, @PathVariable Integer courseId) {
         return ResponseEntity.ok().body(courseService.assignInstructorToCourse(instructorId, courseId));
+    }
+
+    @PostMapping("/{courseId}/student/{studentId}/assign")
+    public ResponseEntity<CourseResponseDto> assignStudent(@PathVariable Integer courseId, @PathVariable Integer studentId) {
+        return ResponseEntity.ok().body(courseService.assignCourseToStudent(courseId, studentId));
+    }
+
+    @GetMapping("/{courseId}/students")
+    public ResponseEntity<List<StudentResponseDto>> getStudents(@PathVariable Integer courseId) {
+        return ResponseEntity.ok().body(courseService.getStudents(courseId));
     }
 }

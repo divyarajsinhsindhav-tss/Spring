@@ -2,19 +2,16 @@ package com.tss.advancemapping.service;
 
 import com.tss.advancemapping.dto.request.InstructorRequestDto;
 import com.tss.advancemapping.dto.response.InstructorResponseDto;
-import com.tss.advancemapping.entity.Course;
 import com.tss.advancemapping.entity.Instructor;
 import com.tss.advancemapping.exception.ApplicationException;
-import com.tss.advancemapping.exception.BusinessRuleException;
 import com.tss.advancemapping.exception.ResourceNotFoundException;
 import com.tss.advancemapping.mapper.InstructorMapper;
-import com.tss.advancemapping.repository.CourseRepository;
 import com.tss.advancemapping.repository.InstructorRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +74,22 @@ public class InstructorServiceImpl implements InstructorService {
             return instructorMapper.toDto(updatedInstructor);
         } catch (ApplicationException e) {
             throw new ApplicationException("Something went wrong while updating instructor",  "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
+        }
+    }
+
+    @Override
+    public List<InstructorResponseDto> searchInstructor(String searchString) {
+        try {
+            List<Instructor> instructors = instructorRepository
+                    .findByNameStartsWith(searchString)
+                    .orElseThrow(() -> new ResourceNotFoundException("Instructor", searchString));
+
+            return instructors.stream()
+                    .map(instructorMapper::toDto)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new ApplicationException("Something went wrong while searching instructor", "SOMETHING_WENT_WRONG", HttpStatus.INTERNAL_SERVER_ERROR) {};
         }
     }
 }
